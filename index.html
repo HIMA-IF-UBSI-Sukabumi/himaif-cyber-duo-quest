@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HIMAIF Duo: Cyber Quest - 2-Player Co-op Platformer</title>
+  <meta name="description" content="Game platformer kooperatif 2 pemain offline di satu device buatan HIMAIF. Pilih dari 26 karakter unik, pecahkan puzzle sirkuit, dan hindari sensor drone patroli!" />
+  <meta name="keywords" content="HIMAIF, Co-op Game, 2 Player Platformer, Fireboy Watergirl, Cyberpunk Game, Offline Multiplayer" />
+  <meta name="author" content="HIMAIF Developer Team" />
+
+  <!-- Favicon Logo HIMAIF -->
+  <link rel="icon" type="image/png" href="assets/logo/image.png" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Container Kanvas Game -->
+    <main id="canvasContainer">
+      <canvas id="gameCanvas" width="1280" height="720"></canvas>
+    </main>
+
+    <!-- =======================================================
+         LAYAR PEMILIHAN KARAKTER (CHARACTER SELECT SCREEN)
+         ======================================================= -->
+    <section id="selectScreen" aria-labelledby="selectScreenTitle">
+      <!-- Watermark Megah Logo HIMAIF di Background -->
+      <img src="assets/logo/image.png" alt="HIMAIF Watermark" class="bg-brand-watermark" />
+
+      <!-- Header -->
+      <header class="select-header">
+        <div class="brand-badge">
+          <img src="assets/logo/image.png" alt="Logo HIMAIF" id="mainBrandLogo" />
+          <div class="brand-title">
+            <h1 id="selectScreenTitle">HIMAIF DUO: CYBER QUEST</h1>
+            <p>Petualangan Platformer Kooperatif 2 Pemain • 1 Device Offline</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="btnRandomChar" class="btn btn-secondary" title="Pilih Karakter Acak">
+            🎲 Acak Karakter
+          </button>
+        </div>
+      </header>
+
+      <!-- Body: Slot P1 - Grid Karakter - Slot P2 -->
+      <div class="select-body">
+        <!-- Player 1 Slot Preview (WASD) -->
+        <article class="player-slot-card card-p1" id="p1CardPreview">
+          <div class="slot-tag">PLAYER 1</div>
+          <div class="slot-avatar-wrap">
+            <img id="p1PreviewImg" src="assets/charakter/1.png" alt="Avatar P1" />
+          </div>
+          <div class="slot-info">
+            <h2 class="slot-name" id="p1PreviewName">Alpha Byte</h2>
+            <p class="slot-role" id="p1PreviewRole">Cyber Sentinel</p>
+          </div>
+          <div class="slot-controls">
+            <div class="controls-title">KONTROL KEYBOARD:</div>
+            <div class="key-badges">
+              <span class="key-kbrd">W</span>
+              <span class="key-kbrd">A</span>
+              <span class="key-kbrd">S</span>
+              <span class="key-kbrd">D</span>
+            </div>
+            <div style="font-size: 10px; color: #94a3b8; margin-top: 6px; text-align: center;">
+              W: Lompat • A/D: Gerak • S: Tuas
+            </div>
+          </div>
+        </article>
+
+        <!-- Grid 26 Karakter -->
+        <section class="character-select-area">
+          <div class="char-grid-header">
+            <h3>PILIH AVATAR (26 KARAKTER HIMAIF)</h3>
+            <span class="char-grid-tip">⌨️ Navigasi: <b>WASD</b> (P1) & <b>Panah</b> (P2) • Tekan <b>SPACE / ENTER</b> untuk Mulai!</span>
+          </div>
+          <div class="char-grid-scroll" id="characterGrid" role="listbox" aria-label="Daftar Karakter">
+            <!-- Diisi secara dinamis oleh JavaScript -->
+          </div>
+        </section>
+
+        <!-- Player 2 Slot Preview (Arrow Keys) -->
+        <article class="player-slot-card card-p2" id="p2CardPreview">
+          <div class="slot-tag">PLAYER 2</div>
+          <div class="slot-avatar-wrap">
+            <img id="p2PreviewImg" src="assets/charakter/2.png" alt="Avatar P2" />
+          </div>
+          <div class="slot-info">
+            <h2 class="slot-name" id="p2PreviewName">Binary Nova</h2>
+            <p class="slot-role" id="p2PreviewRole">Quantum Scout</p>
+          </div>
+          <div class="slot-controls">
+            <div class="controls-title">KONTROL KEYBOARD:</div>
+            <div class="key-badges">
+              <span class="key-kbrd">▲</span>
+              <span class="key-kbrd">◄</span>
+              <span class="key-kbrd">▼</span>
+              <span class="key-kbrd">►</span>
+              <span class="key-kbrd" style="color: #ff9900;">Shift</span>
+            </div>
+            <div style="font-size: 10px; color: #94a3b8; margin-top: 6px; text-align: center;">
+              ▲: Lompat • ◄/►: Gerak • ▼: Tuas • <b>Shift: Shield</b>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Footer Action -->
+      <footer class="select-footer">
+        <button id="btnStartGame" class="btn btn-primary" style="font-size: 17px; padding: 14px 44px;">
+          MULAI MISI SEKARANG (SPACE / ENTER) ➔
+        </button>
+      </footer>
+    </section>
+
+    <!-- =======================================================
+         IN-GAME HUD & STATUS OVERLAY
+         ======================================================= -->
+    <section id="gameOverlay" class="hidden" aria-label="Game HUD">
+      <!-- Top HUD -->
+      <div class="hud-header">
+        <div class="hud-stage-info">
+          <div class="hud-stage-name" id="hudStageName">STAGE 1: SYSTEM BOOT</div>
+          <div class="hud-stage-subtitle" id="hudStageSubtitle">Pelajari kontrol & koordinasi membuka gerbang</div>
+        </div>
+
+        <div class="hud-center-status">
+          <div class="hud-tokens-wrap" id="hudTokens" title="Logo Token HIMAIF">
+            <!-- Diisi dinamis -->
+          </div>
+          <div class="hud-timer" id="hudTimer">0:00</div>
+        </div>
+
+        <div class="hud-actions">
+          <button id="btnMute" class="btn-icon" title="Toggle Suara (M)">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+          </button>
+          <button id="btnRestart" class="btn-icon" title="Ulangi Stage Ini (R)">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </button>
+          <button id="btnPause" class="btn-icon" title="Jeda Game (P / ESC)">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </button>
+          <button id="btnMenu" class="btn-icon" title="Pilih Karakter Lain">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom HUD: Status Pemain & Ability Meters -->
+      <div class="hud-footer">
+        <div class="player-mini-hud p1-hud">
+          <img id="hudP1Avatar" class="player-mini-avatar" src="assets/charakter/1.png" alt="P1" />
+          <div class="player-mini-text">
+            <div class="player-mini-tag">PLAYER 1 <span style="font-size: 9px; color: #00f2fe; font-weight: normal;">(Double Jump Active)</span></div>
+            <div class="ability-meter-wrap">
+              <div id="p1AbilityBar" class="ability-progress-bar ready"></div>
+            </div>
+            <div id="p1AbilityText" style="color: #94a3b8; font-size: 10px; font-weight: bold; margin-top: 2px;">⚡ EMP READY [E]</div>
+          </div>
+        </div>
+
+        <div class="player-mini-hud p2-hud">
+          <img id="hudP2Avatar" class="player-mini-avatar" src="assets/charakter/2.png" alt="P2" />
+          <div class="player-mini-text">
+            <div class="player-mini-tag">PLAYER 2 <span style="font-size: 9px; color: #ff9900; font-weight: normal;">(Heavy Push Active)</span></div>
+            <div class="ability-meter-wrap">
+              <div id="p2AbilityBar" class="ability-progress-bar ready"></div>
+            </div>
+            <div id="p2AbilityText" style="color: #94a3b8; font-size: 10px; font-weight: bold; margin-top: 2px;">🛡️ SHIELD READY [Shift]</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================
+         MODAL VICTORY (STAGE SELESAI)
+         ======================================================= -->
+    <div id="modalVictory" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="victoryTitle">
+      <div class="modal-card victory">
+        <div style="font-size: 44px; margin-bottom: 8px;">🏆</div>
+        <h2 class="modal-title" id="victoryTitle">MISI SELESAI!</h2>
+        <p class="modal-subtitle">Kedua pemain berhasil mencapai Core Portal bersama!</p>
+
+        <div class="victory-stars" id="victoryStars">
+          <!-- Bintang diisi secara dinamis -->
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-label">WAKTU TEMPUH</div>
+            <div class="stat-value" id="victoryTime">0:45</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">LOGO TOKEN HIMAIF</div>
+            <div class="stat-value" id="victoryTokens">3 / 3</div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="btnNextStage" class="btn btn-primary">STAGE BERIKUTNYA ➔</button>
+          <div style="display: flex; gap: 10px;">
+            <button id="btnReplayStage" class="btn btn-secondary" style="flex: 1;">MAIN ULANG</button>
+            <button id="btnVictoryMenu" class="btn btn-secondary" style="flex: 1;">PILIH KARAKTER</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL GAME OVER (TERTANGKAP SENSOR)
+         ======================================================= -->
+    <div id="modalGameOver" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="defeatTitle">
+      <div class="modal-card defeat">
+        <div style="font-size: 44px; margin-bottom: 8px;">⚠️</div>
+        <h2 class="modal-title" id="defeatTitle">TERDETEKSI SENSOR!</h2>
+        <p class="modal-subtitle">Salah satu pemain tertangkap sensor drone atau rintangan laser.</p>
+
+        <div class="modal-actions" style="margin-top: 20px;">
+          <button id="btnRetry" class="btn btn-primary" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: #fff;">
+            COBA LAGI (TEKAN R) ↺
+          </button>
+          <button id="btnGameOverMenu" class="btn btn-secondary">
+            MENU UTAMA
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entry Script ES6 -->
+  <script type="module" src="js/game.js"></script>
+</body>
+</html>
